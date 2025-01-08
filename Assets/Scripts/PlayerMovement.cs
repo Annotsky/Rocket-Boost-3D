@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float rotationSpeed = 2f;
     
     private Rigidbody _rigidbody;
+    private AudioSource _audioSource;
     
     private void OnEnable()
     {
@@ -20,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void FixedUpdate()
@@ -33,24 +35,35 @@ public class PlayerMovement : MonoBehaviour
         if (thrust.IsPressed())
         {
             _rigidbody.AddRelativeForce(Vector3.up * (thrustSpeed * Time.fixedDeltaTime));
+            if (!_audioSource.isPlaying)
+            {
+                _audioSource.Play();
+            }
+        }
+        else
+        {
+            _audioSource.Stop();
         }
     }
     
     private void ProcessRotation()
     {
         float rotationInput = rotation.ReadValue<float>();
-        if (rotationInput < 0)
+        switch (rotationInput)
         {
-            ApplyRotation(rotationSpeed);
-        }
-        else if (rotationInput > 0)
-        {
-            ApplyRotation(-rotationSpeed);
+            case < 0:
+                ApplyRotation(rotationSpeed);
+                break;
+            case > 0:
+                ApplyRotation(-rotationSpeed);
+                break;
         }
     }
 
     private void ApplyRotation(float plusOrMinusRotationSpeed)
     {
+        _rigidbody.freezeRotation = true;
         transform.Rotate(Vector3.forward * (plusOrMinusRotationSpeed * Time.fixedDeltaTime));
+        _rigidbody.freezeRotation = false;
     }
 }
