@@ -1,13 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Vector3 = UnityEngine.Vector3;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Input")]
     [SerializeField] private InputAction thrust;
-    [SerializeField] private InputAction rotation;
     [SerializeField] private float thrustSpeed = 2f;
+    [SerializeField] private InputAction rotation;
     [SerializeField] private float rotationSpeed = 2f;
+    [Header("Audio")]
+    [SerializeField] private AudioClip mainEngineSound;
     
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
@@ -37,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
             _rigidbody.AddRelativeForce(Vector3.up * (thrustSpeed * Time.fixedDeltaTime));
             if (!_audioSource.isPlaying)
             {
-                _audioSource.Play();
+                _audioSource.PlayOneShot(mainEngineSound);
             }
         }
         else
