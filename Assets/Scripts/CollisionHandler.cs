@@ -14,7 +14,7 @@ public class CollisionHandler : MonoBehaviour
     private AudioSource _audioSource;
 
     private bool _isControllable = true;
-    private bool _isCollideble = true;
+    private bool _isCollidable = true;
 
     private void Start()
     {
@@ -28,7 +28,7 @@ public class CollisionHandler : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!_isControllable || !_isCollideble) return;
+        if (!_isControllable || !_isCollidable) return;
         switch (collision.gameObject.tag)
         {
             case "Friendly":
@@ -86,8 +86,8 @@ public class CollisionHandler : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {
-            _isCollideble = !_isCollideble;
-            Debug.Log("Collision: " + _isCollideble);
+            _isCollidable = !_isCollidable;
+            Debug.Log("Collision: " + _isCollidable);
         }
     }
 }
