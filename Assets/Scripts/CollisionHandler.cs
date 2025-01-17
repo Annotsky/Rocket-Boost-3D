@@ -1,6 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(AudioSource))]
 public class CollisionHandler : MonoBehaviour
 {
     [SerializeField] private float levelLoadDelay = 1f;
@@ -15,8 +17,9 @@ public class CollisionHandler : MonoBehaviour
 
     private bool _isControllable = true;
     private bool _isCollidable = true;
+    private bool _isCrashable = true;
 
-    private void Start()
+    private void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
     }
@@ -48,7 +51,7 @@ public class CollisionHandler : MonoBehaviour
         _isControllable = false;
         GetComponent<PlayerMovement>().enabled = false;
         _audioSource.PlayOneShot(successSound);
-        Invoke(nameof(LoadNextLevel), levelLoadDelay);
+        StartCoroutine(LoadNextLevelAfterDelay(levelLoadDelay));
     }
     private void StartCrashSequence()
     {
@@ -57,19 +60,20 @@ public class CollisionHandler : MonoBehaviour
         _audioSource.Stop();
         GetComponent<PlayerMovement>().enabled = false;
         _audioSource.PlayOneShot(crashSound);
-        Invoke(nameof(ReloadLevel), levelLoadDelay);
+        StartCoroutine(ReloadLevelAfterDelay(levelLoadDelay));
     }
     
-    private void ReloadLevel()
+    private IEnumerator ReloadLevelAfterDelay(float delay)
     {
+        yield return new WaitForSeconds(delay);
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
     }
     
-    private void LoadNextLevel()
+    private IEnumerator LoadNextLevelAfterDelay(float delay)
     {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        int nextSceneIndex = currentSceneIndex + 1;
+        yield return new WaitForSeconds(delay);
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
 
         if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
         {
@@ -82,7 +86,7 @@ public class CollisionHandler : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
-            LoadNextLevel();
+            StartCoroutine(LoadNextLevelAfterDelay(0));
         }
         else if (Input.GetKeyDown(KeyCode.C))
         {

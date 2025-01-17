@@ -9,7 +9,6 @@ public class Oscillator : MonoBehaviour
     private Vector3 _endPosition;
     private float _movementFactor;
     
-    
     private void Start()
     {
         _startPosition = transform.position;

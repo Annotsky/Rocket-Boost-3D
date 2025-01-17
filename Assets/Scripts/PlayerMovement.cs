@@ -18,16 +18,16 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
     
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+        _audioSource = GetComponent<AudioSource>();
+    }
+    
     private void OnEnable()
     {
         thrust.Enable();
         rotation.Enable();
-    }
-
-    private void Start()
-    {
-        _rigidbody = GetComponent<Rigidbody>();
-        _audioSource = GetComponent<AudioSource>();
     }
 
     private void FixedUpdate()
@@ -70,34 +70,29 @@ public class PlayerMovement : MonoBehaviour
     private void ProcessRotation()
     {
         float rotationInput = rotation.ReadValue<float>();
-        switch (rotationInput)
-        {
-            case < 0:
-                RotateLeft();
-                break;
-            case > 0:
-                RotateRight();
-                break;
-            default:
-                StopRotation();
-                break;
-        }
+        if (rotationInput < 0)
+            RotateLeft();
+        else if (rotationInput > 0)
+            RotateRight();
+        else
+            StopRotation();
     }
 
     private void RotateLeft()
     {
         ApplyRotation(rotationSpeed);
-        if (leftEngineParticles.isPlaying) return;
-        rightEngineParticles.Stop();
-        leftEngineParticles.Play();
+        if (rightEngineParticles.isPlaying) return;
+        leftEngineParticles.Stop();
+        rightEngineParticles.Play();
     }
 
     private void RotateRight()
     {
         ApplyRotation(-rotationSpeed);
-        if (rightEngineParticles.isPlaying) return;
-        leftEngineParticles.Stop();
-        rightEngineParticles.Play();
+        if (leftEngineParticles.isPlaying) return;
+        rightEngineParticles.Stop();
+        leftEngineParticles.Play();
+        
     }
     
     private void StopRotation()
